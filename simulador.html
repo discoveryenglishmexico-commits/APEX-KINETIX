@@ -355,9 +355,12 @@
         updateWordCount();
 
         // --- SINTETIZADOR DE AUDIO HOLOGRÁFICO (WEB AUDIO API) ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
         function playTone(frequency, duration) {
             try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
 
