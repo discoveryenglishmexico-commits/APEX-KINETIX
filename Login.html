@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX Kinetix - Control de Acceso</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para iconografía -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        apex: {
+                            blue: '#00529B',
+                            cyan: '#00A4E4',
+                            dark: '#0F172A',
+                            slate: '#1E293B',
+                            lightBg: '#F8FAFC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .theme-transition {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans theme-transition min-h-screen flex flex-col justify-between" id="body-container">
+
+    <!-- Encabezado superior minimalista -->
+    <header class="h-16 flex items-center justify-between px-6 md:px-12 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 theme-transition">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl font-black text-apex-blue dark:text-apex-cyan tracking-wider">APEX</span>
+            <span class="text-[10px] bg-apex-blue/10 text-apex-blue dark:bg-apex-cyan/20 dark:text-apex-cyan px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Kinetix</span>
+        </div>
+
+        <!-- Botón de Modo Oscuro -->
+        <button id="dark-mode-toggle" class="w-10 h-10 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl flex items-center justify-center text-slate-500 dark:text-yellow-400 transition-colors">
+            <i class="fas fa-moon text-lg" id="dark-icon"></i>
+        </button>
+    </header>
+
+    <!-- Contenido Principal: Tarjeta de Acceso -->
+    <main class="flex-1 flex items-center justify-center p-4 md:p-8">
+        <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 theme-transition relative overflow-hidden">
+
+            <!-- Efecto decorativo de fondo -->
+            <div class="absolute -right-16 -top-16 w-32 h-32 bg-apex-cyan/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-16 -bottom-16 w-32 h-32 bg-apex-blue/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- Cabecera de la tarjeta -->
+            <div class="text-center space-y-2 relative z-10">
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight" id="form-title">Iniciar Sesión</h2>
+                <p class="text-xs text-slate-400" id="form-subtitle">Ingresa tus credenciales para acceder a tu gimnasio ocular</p>
+            </div>
+
+            <!-- Selector de Pestañas (Login / Registro) -->
+            <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl transition-colors relative z-10">
+                <button id="tab-login" class="flex-1 py-2 rounded-lg font-bold text-xs transition-all bg-white dark:bg-slate-900 text-apex-blue dark:text-apex-cyan shadow-sm">
+                    Ingresar
+                </button>
+                <button id="tab-register" class="flex-1 py-2 rounded-lg font-bold text-xs transition-all text-slate-600 dark:text-slate-400 hover:text-apex-blue">
+                    Registrarse
+                </button>
+            </div>
+
+            <!-- Formulario Unificado -->
+            <form id="auth-form" class="space-y-4 relative z-10" onsubmit="handleSubmit(event)">
+
+                <!-- Nombre Completo (Solo visible en Registro) -->
+                <div id="field-name" class="space-y-1.5 hidden">
+                    <label class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest">Nombre Completo</label>
+                    <div class="relative">
+                        <i class="fas fa-user absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="input-name" class="w-full pl-11 pr-4 py-3 border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl text-sm focus:ring-2 focus:ring-apex-cyan focus:outline-none text-slate-700 dark:text-slate-300" placeholder="Ej. Juan Pérez">
+                    </div>
+                </div>
+
+                <!-- Correo Electrónico -->
+                <div class="space-y-1.5">
+                    <label class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest">Correo Electrónico</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="email" id="input-email" required class="w-full pl-11 pr-4 py-3 border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl text-sm focus:ring-2 focus:ring-apex-cyan focus:outline-none text-slate-700 dark:text-slate-300" placeholder="tu@correo.com">
+                    </div>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="space-y-1.5">
+                    <label class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest">Contraseña</label>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="password" id="input-password" required class="w-full pl-11 pr-4 py-3 border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl text-sm focus:ring-2 focus:ring-apex-cyan focus:outline-none text-slate-700 dark:text-slate-300" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- Código de Activación de Weebly (Solo visible en Registro) -->
+                <div id="field-code" class="space-y-1.5 hidden">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest">Código de Activación</label>
+                        <a href="https://www.maxneuroeducation.com" target="_blank" class="text-[9px] text-apex-cyan hover:underline font-bold uppercase tracking-wider">¿No tienes código?</a>
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-key absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="input-code" class="w-full pl-11 pr-4 py-3 border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl text-sm focus:ring-2 focus:ring-apex-cyan focus:outline-none text-slate-700 dark:text-slate-300" placeholder="Ej. APEX-SAPIEN-2026">
+                    </div>
+                    <p class="text-[10px] text-slate-400 leading-relaxed mt-1">Ingresa el código que recibiste en tu correo de confirmación de compra en Weebly.</p>
+                </div>
+
+                <!-- Botón de Envío -->
+                <button type="submit" id="btn-submit" class="w-full bg-apex-blue hover:bg-blue-700 text-white font-black py-3.5 rounded-xl shadow-lg shadow-apex-blue/20 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2 mt-2">
+                    <span>Ingresar al Sistema</span> <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Pie de página minimalista -->
+    <footer class="h-16 flex items-center justify-center border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 theme-transition text-xs text-slate-400">
+        <p>© 2026 APEX Kinetix. Todos los derechos reservados. No es velocidad, es soberanía.</p>
+    </footer>
+
+    <!-- Programación del Control de Acceso y Sincronización Local -->
+    <script>
+        // Catálogo de Códigos de Activación Autorizados (puedes añadir o quitar códigos aquí)
+        const VALID_CODES = [
+            "APEX-SAPIEN-2026",
+            "KINETIX-ELITE-99",
+            "GUADALAJARA-GASTRO",
+            "SAPIEN-FOCUS-GOLD"
+        ];
+
+        let currentTab = "login"; // "login" o "register"
+
+        // Elementos DOM
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const fieldName = document.getElementById('field-name');
+        const fieldCode = document.getElementById('field-code');
+        const formTitle = document.getElementById('form-title');
+        const formSubtitle = document.getElementById('form-subtitle');
+        const btnSubmit = document.getElementById('btn-submit');
+
+        const inputName = document.getElementById('input-name');
+        const inputEmail = document.getElementById('input-email');
+        const inputPassword = document.getElementById('input-password');
+        const inputCode = document.getElementById('input-code');
+
+        const darkToggle = document.getElementById('dark-mode-toggle');
+        const darkIcon = document.getElementById('dark-icon');
+        const htmlElement = document.documentElement;
+
+        // --- SISTEMA DE PESTAÑAS ---
+        tabLogin.addEventListener('click', () => {
+            setTab("login");
+        });
+
+        tabRegister.addEventListener('click', () => {
+            setTab("register");
+        });
+
+        function setTab(tab) {
+            currentTab = tab;
+            if (tab === "login") {
+                // Activar pestaña visual
+                tabLogin.className = "flex-1 py-2 rounded-lg font-bold text-xs transition-all bg-white dark:bg-slate-900 text-apex-blue dark:text-apex-cyan shadow-sm";
+                tabRegister.className = "flex-1 py-2 rounded-lg font-bold text-xs transition-all text-slate-600 dark:text-slate-400 hover:text-apex-blue";
+
+                // Ocultar campos exclusivos de registro
+                fieldName.classList.add('hidden');
+                fieldCode.classList.add('hidden');
+
+                // Remover requeridos para evitar bloqueos
+                inputName.removeAttribute('required');
+                inputCode.removeAttribute('required');
+
+                // Textos
+                formTitle.textContent = "Iniciar Sesión";
+                formSubtitle.textContent = "Ingresa tus credenciales para acceder a tu gimnasio ocular";
+                btnSubmit.innerHTML = `<span>Ingresar al Sistema</span> <i class="fas fa-arrow-right"></i>`;
+            } else {
+                // Activar pestaña visual
+                tabRegister.className = "flex-1 py-2 rounded-lg font-bold text-xs transition-all bg-white dark:bg-slate-900 text-apex-blue dark:text-apex-cyan shadow-sm";
+                tabLogin.className = "flex-1 py-2 rounded-lg font-bold text-xs transition-all text-slate-600 dark:text-slate-400 hover:text-apex-blue";
+
+                // Mostrar campos exclusivos de registro
+                fieldName.classList.remove('hidden');
+                fieldCode.classList.remove('hidden');
+
+                // Hacerlos requeridos
+                inputName.setAttribute('required', 'true');
+                inputCode.setAttribute('required', 'true');
+
+                // Textos
+                formTitle.textContent = "Registro APEX Kinetix";
+                formSubtitle.textContent = "Crea tu cuenta utilizando tu código de de membresía de Weebly";
+                btnSubmit.innerHTML = `<span>Completar Registro</span> <i class="fas fa-user-plus"></i>`;
+            }
+        }
+
+        // --- PROCESAMIENTO DEL FORMULARIO (BASE DE DATOS EN LOCALSTORAGE) ---
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const email = inputEmail.value.trim().toLowerCase();
+            const password = inputPassword.value;
+
+            if (currentTab === "register") {
+                const name = inputName.value.trim();
+                const code = inputCode.value.trim().toUpperCase();
+
+                // 1. Validar el Código de Activación de Weebly
+                if (!VALID_CODES.includes(code)) {
+                    alert("⚠️ El código de activación ingresado es inválido o ya ha caducado. Por favor, verifica el correo de tu compra en Weebly.");
+                    return;
+                }
+
+                // 2. Verificar si el correo ya está registrado
+                const existingUser = localStorage.getItem(`apex_user_${email}`);
+                if (existingUser) {
+                    alert("⚠️ Este correo electrónico ya se encuentra registrado en el sistema. Intenta iniciar sesión.");
+                    setTab("login");
+                    return;
+                }
+
+                // 3. Registrar el usuario en LocalStorage de forma local
+                const userData = {
+                    name: name,
+                    email: email,
+                    password: password,
+                    activationCode: code,
+                    dateRegistered: new Date().toISOString()
+                };
+
+                localStorage.setItem(`apex_user_${email}`, JSON.stringify(userData));
+
+                // Inicializar variables de progreso para el nuevo alumno si no existen
+                localStorage.setItem('apex_ritmo_enfoque', '200');
+                localStorage.setItem('apex_retencion_cognitiva', '0');
+                localStorage.setItem('apex_focus_streak', '0');
+                localStorage.setItem('apex_minutos_totales', '0');
+
+                alert("🎉 ¡Registro completado con éxito! Ahora puedes iniciar sesión con tu cuenta.");
+                setTab("login");
+
+                // Limpiar inputs de registro
+                inputName.value = "";
+                inputCode.value = "";
+                inputPassword.value = "";
+            } else {
+                // --- PROCESO DE LOGIN ---
+                const savedUserRaw = localStorage.getItem(`apex_user_${email}`);
+
+                // Cuenta maestra de respaldo para pruebas rápidas
+                if (email === "demo@apex.com" && password === "apex123") {
+                    concederAcceso("Lector Demo", email);
+                    return;
+                }
+
+                if (!savedUserRaw) {
+                    alert("❌ No se encontró ninguna cuenta registrada con este correo electrónico.");
+                    return;
+                }
+
+                const savedUser = JSON.parse(savedUserRaw);
+                if (savedUser.password !== password) {
+                    alert("❌ La contraseña ingresada es incorrecta. Por favor, vuelve a intentarlo.");
+                    return;
+                }
+
+                concederAcceso(savedUser.name, email);
+            }
+        }
+
+        function concederAcceso(name, email) {
+            // Guardar bandera de sesión activa
+            localStorage.setItem('apex_logged_in', 'true');
+            localStorage.setItem('apex_active_email', email);
+            localStorage.setItem('apex_active_name', name);
+
+            alert(`¡Bienvenido de vuelta, ${name}! Iniciando tu gimnasio ocular...`);
+
+            // Redireccionar al Dashboard Principal
+            window.location.href = "index.html";
+        }
+
+        // --- GESTIÓN DE MODO OSCURO SINCRONIZADO ---
+        function aplicarModoOscuro(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                darkIcon.className = "fas fa-sun text-lg text-yellow-400";
+                localStorage.setItem('apex_dark_mode', 'enabled');
+            } else {
+                htmlElement.classList.remove('dark');
+                darkIcon.className = "fas fa-moon text-lg text-slate-500";
+                localStorage.setItem('apex_dark_mode', 'disabled');
+            }
+        }
+
+        // Inicializar Estado de Modo Oscuro al Cargar
+        const currentSetting = localStorage.getItem('apex_dark_mode');
+        if (currentSetting === 'enabled') {
+            aplicarModoOscuro(true);
+        } else {
+            aplicarModoOscuro(false);
+        }
+
+        darkToggle.addEventListener('click', () => {
+            const isDark = htmlElement.classList.contains('dark');
+            aplicarModoOscuro(!isDark);
+        });
+    </script>
+</body>
+</html>
+🔐 Instrucciones de Seguridad y Personalización:
+Catálogo de Códigos de Membresía: En la línea 132 del código de la página, verás una lista que dice const VALID_CODES = [...]. Puedes agregar ahí los códigos de activación únicos que le enviarás automáticamente a tus alumnos de Weebly tras su compra (ej. "APEX-GASTRO-2026"). Solo quienes tengan uno de estos códigos podrán registrarse por primera vez.
+Cuenta Maestra de Demostración: He dejado una cuenta de respaldo maestra para que puedas hacer pruebas rápidas frente a tus inversionistas o directores universitarios. Puedes ingresar usando:
+Correo: demo@apex.com
+Contraseña: apex123
+Guardia de Seguridad Opcional (Recomendado): Para evitar que personas sin cuenta entren directamente a tu Dashboard, puedes pegar el siguiente mini-script al inicio de la etiqueta <script> en tus archivos index.html, simulador.html, hub.html y lexico.html:
+if (localStorage.getItem('apex_logged_in') !== 'true') {
+    window.location.href = 'login.html';
+}
