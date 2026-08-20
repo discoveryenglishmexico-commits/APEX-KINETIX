@@ -210,7 +210,7 @@
             </div>
 
             <!-- Controles y Configuración de Velocidad -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 <!-- Panel de Control Principal -->
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4 theme-transition">
@@ -253,6 +253,15 @@
                         <span>Estrecho (40)</span>
                         <span>Medio (120)</span>
                         <span>Ángulo Élite (240)</span>
+                    </div>
+                </div>
+
+                <!-- Ajuste del Campo Visual (Zoom/Tamaño de Letra) -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4 theme-transition">
+                    <h4 class="font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px]">Ajuste del Campo Visual</h4>
+                    <div class="flex items-center gap-4 justify-center">
+                        <button id="btn-zoom-out" class="w-12 h-12 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 flex items-center justify-center font-extrabold">-A</button>
+                        <button id="btn-zoom-in" class="w-12 h-12 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 flex items-center justify-center font-extrabold">+A</button>
                     </div>
                 </div>
 
@@ -347,6 +356,8 @@
         const et2ColumnsContainer = document.getElementById('et2-columns-container');
         const et3PhraseContainer = document.getElementById('et3-phrase-container');
 
+        const btnZoomIn = document.getElementById('btn-zoom-in');
+        const btnZoomOut = document.getElementById('btn-zoom-out');
         const darkToggle = document.getElementById('dark-mode-toggle');
         const darkIcon = document.getElementById('dark-icon');
         const htmlElement = document.documentElement;
